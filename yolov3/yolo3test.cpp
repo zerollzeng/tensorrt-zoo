@@ -33,6 +33,7 @@ class InputParser{
 };
 
 int main(int argc, char** argv) {
+    std::cout << "usage: ./testyolov3 -prototxt path/to/prototxt -caffemodel path/to/caffemodel/ -save_engine path/to/save_engin -input path/to/input/img" << std::endl;
     InputParser cmdparams(argc, argv);
     const std::string& prototxt = cmdparams.getCmdOption("-prototxt");
     const std::string& caffemodel = cmdparams.getCmdOption("-caffemodel");

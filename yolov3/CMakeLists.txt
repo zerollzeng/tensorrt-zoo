@@ -11,8 +11,6 @@ project(testyolov3)
 
 # link_directories(/usr/lib/x86_64-linux-gnu)
 
-# find_library(CUDART cudart HINTS /usr/local/cuda/targets/x86_64-linux/lib/)
-
 file(GLOB yolov3_source
      *.cpp
      )
