@@ -22,7 +22,7 @@ class YoloV3 {
 public:    
     YoloV3(const std::string& prototxt, 
             const std::string& caffeModel,
-            const std::string& saveEngine,
+            const std::string& engineFile,
             const std::vector<std::string>& outputBlobName,
             const std::vector<std::vector<float>>& calibratorData,
             int maxBatchSize,

@@ -22,3 +22,5 @@ find_library(CUDART cudart HINTS /usr/local/cuda/targets/x86_64-linux/lib/)
 add_subdirectory(tiny-tensorrt)
 
 add_subdirectory(yolov3)
+
+add_subdirectory(onnx)

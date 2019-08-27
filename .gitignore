@@ -3,3 +3,4 @@ models/
 .vscode/
 bin/
 lib/
+onnx/

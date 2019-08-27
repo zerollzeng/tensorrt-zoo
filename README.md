@@ -29,7 +29,7 @@ layer {
     type: "Yolo"
 }
 ```
-the model comes from [lewes6369/TensorRT-Yolov3](https://github.com/lewes6369/TensorRT-Yolov3), if you want to canvert your own yolov3 model, you can use [BingzheWu/object_detetction_tools](https://github.com/BingzheWu/object_detetction_tools) with nn_model_transform, note that you need to compile a caffe with upsample layer, see [here](https://github.com/BVLC/caffe/pull/6384), if you have any question you can creating an issue :D
+the model comes from [lewes6369/TensorRT-Yolov3](https://github.com/lewes6369/TensorRT-Yolov3), if you want to canvert your own yolov3 model, you can use [BingzheWu/object_detetction_tools](https://github.com/BingzheWu/object_detetction_tools) with nn_model_transform, note that you need to compile a caffe with upsample layer, see [here](https://github.com/BVLC/caffe/pull/6384), if you have any question you can creat an issue :D
 
 ## build demo
 

@@ -18,7 +18,7 @@
 
 YoloV3::YoloV3(const std::string& prototxt, 
                 const std::string& caffeModel,
-                const std::string& saveEngine,
+                const std::string& engineFile,
                 const std::vector<std::string>& outputBlobName,
                 const std::vector<std::vector<float>>& calibratorData,
                 int maxBatchSize,
@@ -29,7 +29,7 @@ YoloV3::YoloV3(const std::string& prototxt,
     params->yoloClassNum = yoloClassNum;
     params->yolo3NetSize = netSize;
     mNet = new Trt(params);
-    mNet->CreateEngine(prototxt, caffeModel, saveEngine, outputBlobName, calibratorData, maxBatchSize, mode);
+    mNet->CreateEngine(prototxt, caffeModel, engineFile, outputBlobName, calibratorData, maxBatchSize, mode);
     mYoloClassNum = yoloClassNum;
     mpDetCpu = new float[63883];
 }
