@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
                 outputBlobname,
                 calibratorData,
                 maxBatchSize,
-                RUN_MODE::FLOAT32,
+                0,
                 yoloClassNum,
                 netSize);
 
@@ -90,7 +90,8 @@ int main(int argc, char** argv) {
     YoloInDataSt* input = new YoloInDataSt();
     input->originalWidth = img.cols;
     input->originalHeight = img.rows;
-    float* data = input->data;
+    input->data.resize(c*h*w);
+    float* data = input->data.data();
     int channelLength = h * w;
     for (int i = 0; i < c; ++i) {
         memcpy(data,input_channels[i].data,channelLength*sizeof(float));
@@ -108,14 +109,14 @@ int main(int argc, char** argv) {
     //         }
     //     }
     // }
-    YoloOutDataSt* output = new YoloOutDataSt();
+    std::vector<Bbox> output;
     clock_t start = clock();
-    yolo3.DoInference((void*)input, (void*)output);
+    yolo3.DoInference(input, output);
     clock_t end = clock();
     std::cout << "inference Time : " <<((double)(end - start) / CLOCKS_PER_SEC)*1000 << " ms" << std::endl;
     spdlog::info("------------------------");
-    for(int i=0;i<output->result.size();i++) {
-        Bbox bbox = output->result[i];
+    for(int i=0;i<output.size();i++) {
+        Bbox bbox = output[i];
         spdlog::info("object in {},{},{},{}",bbox.left,bbox.top,bbox.right,bbox.bottom);
         cv::rectangle(img,cv::Point(bbox.left,bbox.top),cv::Point(bbox.right,bbox.bottom),cv::Scalar(0,255,0),1);
     }

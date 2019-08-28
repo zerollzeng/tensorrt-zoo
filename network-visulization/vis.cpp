@@ -43,7 +43,7 @@ int main(int argc, char ** argv) {
     std::vector<std::string> outputBlobName;
     outputBlobName.push_back("layer1-act");
     int maxBatchSize = 1;
-    RUN_MODE mode=0;
+    int mode=0;
     trt->CreateEngine(prototxt, caffeModel, engineFile, outputBlobName, calibratorData, maxBatchSize, mode);
 
     cv::Mat img = cv::imread(img_name);

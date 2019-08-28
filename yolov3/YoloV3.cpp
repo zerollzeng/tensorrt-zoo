@@ -22,16 +22,16 @@ YoloV3::YoloV3(const std::string& prototxt,
                 const std::vector<std::string>& outputBlobName,
                 const std::vector<std::vector<float>>& calibratorData,
                 int maxBatchSize,
-                RUN_MODE mode,
+                int mode,
                 int yoloClassNum,
                 int netSize) {
-    TrtPluginParams* params = new TrtPluginParams();
-    params->yoloClassNum = yoloClassNum;
-    params->yolo3NetSize = netSize;
+    TrtPluginParams params;
+    params.yoloClassNum = yoloClassNum;
+    params.yolo3NetSize = netSize;
     mNet = new Trt(params);
     mNet->CreateEngine(prototxt, caffeModel, engineFile, outputBlobName, calibratorData, maxBatchSize, mode);
     mYoloClassNum = yoloClassNum;
-    mpDetCpu = new float[63883];
+    mpDetCpu.resize(63883);
 }
 
 YoloV3::~YoloV3() {
@@ -104,9 +104,8 @@ void DoNms(std::vector<Detection>& detections,int classes ,float nmsThresh)
     cout << "Time taken for nms is " << total << " ms." << endl;
 }
 
-void YoloV3::DoInference(void* inputContext,void* outputContext) {
-    YoloInDataSt* in = (YoloInDataSt*)inputContext;
-
+void YoloV3::DoInference(YoloInDataSt* input, std::vector<Bbox>& output) {
+    
     // // debug
     // for(int i=0;i<10;i++) {
     //     std::cout << in->data[i] << " ";
@@ -117,11 +116,9 @@ void YoloV3::DoInference(void* inputContext,void* outputContext) {
     // }
     // std::cout << std::endl;
 
-    YoloOutDataSt* out = (YoloOutDataSt*)outputContext;
-
-    mNet->CopyFromHostToDevice(in->data, 0, 0);
-    mNet->Forward(0);
-    mNet->CopyFromDeviceToHost(mpDetCpu, 1, 0);
+    mNet->CopyFromHostToDevice(input->data, 0);
+    mNet->Forward();
+    mNet->CopyFromDeviceToHost(mpDetCpu, 1);
     
 
     // // debug
@@ -155,8 +152,8 @@ void YoloV3::DoInference(void* inputContext,void* outputContext) {
     memcpy(result.data(), &mpDetCpu[1], detCount*sizeof(Detection));
 
     //scale bbox to img
-    int width = in->originalWidth;
-    int height = in->originalHeight;
+    int width = input->originalWidth;
+    int height = input->originalHeight;
     float scale = std::min(float(mNetWidth)/width,float(mNetHeight)/height);
     float scaleSize[] = {width * scale,height * scale};
 
@@ -191,7 +188,7 @@ void YoloV3::DoInference(void* inputContext,void* outputContext) {
         bbox.bottom = std::min(int((b[1]+b[3]/2.)*height),height);
         bbox.score = item.prob;
         spdlog::info("object in {},{},{},{}",bbox.left,bbox.top,bbox.right,bbox.bottom);
-        out->result.push_back(bbox);
+        output.push_back(bbox);
     }
 }
 
