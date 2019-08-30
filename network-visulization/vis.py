@@ -1,7 +1,7 @@
 '''
 @Date: 2019-08-29 10:28:33
 @LastEditors: zerollzeng
-@LastEditTime: 2019-08-29 15:09:56
+@LastEditTime: 2019-08-30 17:58:16
 '''
 import sys
 sys.path.append("../lib")
@@ -13,16 +13,24 @@ img = Image.open("../test.jpg")
 
 img_arr = list(img.getdata())
 
-img_rgb = []
+np_hwc = np.array(img,dtype=np.float32)
+np_chw = np.transpose(np_hwc,(2,0,1))
 
-for i in range(3):
-    for pixel in img_arr:
-        img_rgb.append(pixel[i])
+np_chw = np_chw/255 - 0.5;
 
-img_rgb = [float(i)/255-0.5 for i in img_rgb]
-heatmap = []
+# print(np_chw)
+
+
+
+# for i in range(3):
+#     for pixel in img_arr:
+#         img_rgb.append(pixel[i])
+
+# img_rgb = [float(i)/255-0.5 for i in img_rgb]
+# heatmap = []
 
 trt = pytrt.Trt()
+pluginParams = pytrt.TrtPluginParams()
 prototxt = "../models/openpose/pose_deploy.prototxt"
 caffeModel = "../models/openpose/pose_iter_584000.caffemodel"
 engineFile = "../models/openpose/openpose.trt"
@@ -32,11 +40,17 @@ maxBatchSize = 1
 mode = 0
 # trt.CreateEngine("../models/mobilenetv2-1.0/mobilenetv2-1.0.onnx","../models/mobilenetv2-1.0/mobilenetv2-1.0.trt",1)
 trt.CreateEngine(prototxt,caffeModel,engineFile,outputBlobName,calibratorData,maxBatchSize,mode)
-trt.DataTransfer(img_rgb,0,True)
-trt.Forward()
-trt.DataTransfer(heatmap,1,False)
+# trt.DataTransfer(img_rgb,0,True)
+# trt.Forward()
+# trt.DataTransfer(heatmap,1,False)
+trt.DoInference(np_chw)
+heatmap = trt.GetOutput(1)
 
-print(heatmap)
-print(len(heatmap))
+for i in range(3):
+    img = heatmap[i][:][:]
+    print(img)
+    Image.fromarray(np.uint8(img*255),'L').save(str(i)+".jpg")
+
+# print(len(heatmap))
 # for x in range(10):
 #     trt.Forward()
