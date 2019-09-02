@@ -1,5 +1,14 @@
+<!--
+ * @Author: zerollzeng
+ * @Date: 2019-09-02 16:45:43
+ * @LastEditors: zerollzeng
+ * @LastEditTime: 2019-09-02 19:41:07
+ -->
 # tensorrt-zoo
 common computer vision models with TensorRT
+
+# Roadmap
+- [ ] network visualization --working on
 
 # System requirements
 CUDA version >= 9.0 is fully test. 8.0 might also work but didn't test.

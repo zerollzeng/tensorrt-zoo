@@ -1,7 +1,7 @@
 '''
 @Date: 2019-08-29 10:28:33
 @LastEditors: zerollzeng
-@LastEditTime: 2019-08-30 17:58:16
+@LastEditTime: 2019-09-02 19:36:08
 '''
 import sys
 sys.path.append("../lib")
@@ -46,9 +46,11 @@ trt.CreateEngine(prototxt,caffeModel,engineFile,outputBlobName,calibratorData,ma
 trt.DoInference(np_chw)
 heatmap = trt.GetOutput(1)
 
-for i in range(3):
-    img = heatmap[i][:][:]
-    print(img)
+for i in range(78):
+    img = heatmap[i]
+    img_min = img.min()
+    img_max = img.max()
+    img = (img-img_min)/(img_max-img_min)
     Image.fromarray(np.uint8(img*255),'L').save(str(i)+".jpg")
 
 # print(len(heatmap))
