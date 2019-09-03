@@ -4,3 +4,5 @@ models/
 bin/
 lib/
 onnx/
+*.jpg
+!/test.jpg
