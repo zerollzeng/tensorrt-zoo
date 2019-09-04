@@ -2,7 +2,7 @@
  * @Author: zerollzeng
  * @Date: 2019-09-02 16:45:43
  * @LastEditors: zerollzeng
- * @LastEditTime: 2019-09-04 17:35:23
+ * @LastEditTime: 2019-09-04 17:52:16
  -->
 # tensorrt-zoo
 common computer vision models and some useful tools base on [tiny-tensorrt](https://github.com/zerollzeng/tiny-tensorrt).
@@ -23,7 +23,7 @@ OPENCV version >= 3.0, only use for read/write images and some basic image proce
 # Quick Start with python and openpose
 I am gonna show you how to use tiny-tensorrt to visualize a model layer activation, hope it will give you an intuitive understanding of tiny-tensorrt and convolutional neural network.
 
-you need to compile the project at first
+you need to compile the project at the beginning.
 ```bash
 # make sure you install cuda and tensorrt 5.x, opencv is not necessary for this sample.
 # you can just comment relative line in CMakeLists.txt if you don't want to run yolov3
@@ -41,14 +41,18 @@ cd activation-visualization
 pip install -r requirements.txt
 ```
 
-we can run sample now
+after compile and data prepare, you can run sample now
 ```bash
 python vis.py
 ```
 
-and you can get output activation in activation folder, it look like this
+and you can see output activation images in activation folder, it contain all of the convolution layer of openpose and it should look like this.
 
 ![image](https://user-images.githubusercontent.com/38289304/64239641-299dcd00-cf33-11e9-9c75-051fa0c5c13f.png)
+
+ for more intuitive understanding, I recommend you visualize prototxt with this online [caffe network visualization tool](https://ethereon.github.io/netscope/#/editor), you can browse the network architecture like this
+
+ ![image](https://user-images.githubusercontent.com/38289304/64245002-a84b3800-cf3c-11e9-8fcd-cf6915e84232.png)
 
 you can see details activation images in those sub-folders. like this feature map in first convolution layer
 
@@ -71,7 +75,7 @@ you can test with your own model, maybe need some change in vis.py because of di
 python vis.py --help
 ```
 
-# yolov2 sample
+# yolov3 sample
 see README.md in yolov3
 
 
