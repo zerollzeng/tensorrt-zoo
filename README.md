@@ -2,7 +2,7 @@
  * @Author: zerollzeng
  * @Date: 2019-09-02 16:45:43
  * @LastEditors: zerollzeng
- * @LastEditTime: 2019-09-04 17:28:08
+ * @LastEditTime: 2019-09-04 17:35:23
  -->
 # tensorrt-zoo
 common computer vision models and some useful tools base on [tiny-tensorrt](https://github.com/zerollzeng/tiny-tensorrt).
@@ -51,15 +51,19 @@ and you can get output activation in activation folder, it look like this
 ![image](https://user-images.githubusercontent.com/38289304/64239641-299dcd00-cf33-11e9-9c75-051fa0c5c13f.png)
 
 you can see details activation images in those sub-folders. like this feature map in first convolution layer
+
 ![0](https://user-images.githubusercontent.com/38289304/64239906-a761d880-cf33-11e9-8005-542dee105dbc.jpg)
 
 and it's just a channel of the fisrt convolution layer, while the other looks like
+
 ![image](https://user-images.githubusercontent.com/38289304/64240061-dd06c180-cf33-11e9-9e27-49a369ad62cd.png)
 
 if you see other activation map, you might see some activation in the middle of the model layers like Mconv3_stage0_L2_1, you know this layer get some keypoints and pose informaion.
+
 ![image](https://user-images.githubusercontent.com/38289304/64241470-64553480-cf36-11e9-9142-b3199fa8e7d9.png)
 
 or activation near the end of the model which looks like Mconv6_stage1_L2, which output activation is very close to pose and keypoints.
+
 ![image](https://user-images.githubusercontent.com/38289304/64241656-bac27300-cf36-11e9-886e-5687136e1e73.png)
 
 you can test with your own model, maybe need some change in vis.py because of different pre-processing. see
