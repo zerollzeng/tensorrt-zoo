@@ -2,52 +2,72 @@
  * @Author: zerollzeng
  * @Date: 2019-09-02 16:45:43
  * @LastEditors: zerollzeng
- * @LastEditTime: 2019-09-02 19:41:07
+ * @LastEditTime: 2019-09-04 17:28:08
  -->
 # tensorrt-zoo
-common computer vision models with TensorRT
+common computer vision models and some useful tools base on [tiny-tensorrt](https://github.com/zerollzeng/tiny-tensorrt).
+since most of models have complicated pre-processing and post-processing phase, so new model fully supports is time-consuming. so if you have any suggestions, please create an issue :yum::yum::yum::yum::yum:
 
 # Roadmap
-- [ ] network visualization --working on
+- [x] yolov3
+- [x] network visualization - it's fascinating :clap::clap::clap:
+- [ ] find some interesting things can done with tiny tensorrt :dancer::dancer::dancer:
 
 # System requirements
 CUDA version >= 9.0 is fully test. 8.0 might also work but didn't test.
 
-OPENCV version >= 3.0, only use for read/write images and some basic image processing.
-
 TensorRT 5.1.5.0
 
-# Quick start with yolov3
-## data prepare
+OPENCV version >= 3.0, only use for read/write images and some basic image processing. so version 2.x might work but didn't test'.
 
-Download the caffe model converted by official model:
+# Quick Start with python and openpose
+I am gonna show you how to use tiny-tensorrt to visualize a model layer activation, hope it will give you an intuitive understanding of tiny-tensorrt and convolutional neural network.
 
-+ Baidu Cloud [here](https://pan.baidu.com/s/1VBqEmUPN33XrAol3ScrVQA) pwd: gbue
-+ Google Drive [here](https://drive.google.com/open?id=18OxNcRrDrCUmoAMgngJlhEglQ1Hqk_NJ)
-
-
-If run model trained by yourself, comment the "upsample_param" blocks, and modify the prototxt the last layer as:
-```
-layer {
-    #the bottoms are the yolo input layers
-    bottom: "layer82-conv"
-    bottom: "layer94-conv"
-    bottom: "layer106-conv"
-    top: "yolo-det"
-    name: "yolo-det"
-    type: "Yolo"
-}
-```
-the model comes from [lewes6369/TensorRT-Yolov3](https://github.com/lewes6369/TensorRT-Yolov3), if you want to canvert your own yolov3 model, you can use [BingzheWu/object_detetction_tools](https://github.com/BingzheWu/object_detetction_tools) with nn_model_transform, note that you need to compile a caffe with upsample layer, see [here](https://github.com/BVLC/caffe/pull/6384), if you have any question you can creat an issue :D
-
-## build demo
-
+you need to compile the project at first
 ```bash
-git clone --recursive git@github.com:zerollzeng/tensorrt-zoo.git
-cd tensorrt-zoo
-mkdir build && cd build && cmake .. && make && cd ..
-./bin/testyolov3 --prototxt=path_to_prototxt --caffemodel=path_to_caffemodel --save_engine=save_engine_name --input=test.jpg
-# and now you can see result in result.jpg
+# make sure you install cuda and tensorrt 5.x, opencv is not necessary for this sample.
+# you can just comment relative line in CMakeLists.txt if you don't want to run yolov3
+git clone --recursive https://github.com/zerollzeng/tensorrt-zoo
+mkdir build
+cd build && cmake .. && make && cd ..
 ```
+
+then you need to prepare caffe model for openpose and install some python packages
+```bash
+# download model, you can also download it via browser
+wget -P ./models/openpose http://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/body_25/pose_iter_584000.caffemodel
+wget -P ./models/openpose https://raw.githubusercontent.com/CMU-Perceptual-Computing-Lab/openpose/master/models/pose/body_25/pose_deploy.prototxt
+cd activation-visualization
+pip install -r requirements.txt
+```
+
+we can run sample now
+```bash
+python vis.py
+```
+
+and you can get output activation in activation folder, it look like this
+
+![image](https://user-images.githubusercontent.com/38289304/64239641-299dcd00-cf33-11e9-9c75-051fa0c5c13f.png)
+
+you can see details activation images in those sub-folders. like this feature map in first convolution layer
+![0](https://user-images.githubusercontent.com/38289304/64239906-a761d880-cf33-11e9-8005-542dee105dbc.jpg)
+
+and it's just a channel of the fisrt convolution layer, while the other looks like
+![image](https://user-images.githubusercontent.com/38289304/64240061-dd06c180-cf33-11e9-9e27-49a369ad62cd.png)
+
+if you see other activation map, you might see some activation in the middle of the model layers like Mconv3_stage0_L2_1, you know this layer get some keypoints and pose informaion.
+![image](https://user-images.githubusercontent.com/38289304/64241470-64553480-cf36-11e9-9142-b3199fa8e7d9.png)
+
+or activation near the end of the model which looks like Mconv6_stage1_L2, which output activation is very close to pose and keypoints.
+![image](https://user-images.githubusercontent.com/38289304/64241656-bac27300-cf36-11e9-886e-5687136e1e73.png)
+
+you can test with your own model, maybe need some change in vis.py because of different pre-processing. see
+```bash
+python vis.py --help
+```
+
+# yolov2 sample
+see README.md in yolov3
 
 
