@@ -23,4 +23,4 @@ add_subdirectory(tiny-tensorrt)
 
 add_subdirectory(yolov3)
 
-add_subdirectory(onnx)
+# add_subdirectory(onnx)
