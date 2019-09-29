@@ -2,7 +2,7 @@
  * @Author: zerollzeng
  * @Date: 2019-09-06 15:13:19
  * @LastEditors: zerollzeng
- * @LastEditTime: 2019-09-29 17:38:53
+ * @LastEditTime: 2019-09-29 19:36:18
  */
 #include "YoloV3.h"
 #include "spdlog/spdlog.h"
@@ -41,14 +41,14 @@ class InputParser{
 int main(int argc, char** argv) {
     std::cout << "usage: ./testyolov3 --prototxt path/to/prototxt --caffemodel path/to/caffemodel/ --save_engine path/to/save_engin --input path/to/input/img" << std::endl;
     InputParser cmdparams(argc, argv);
-    const std::string& prototxt = "./models/yolov3/yolov3_416_trt.prototxt";
-    const std::string& caffemodel = "./models/yolov3/yolov3_416.caffemodel";
-    const std::string& save_engine = "./models/yolov3/yolov3_416_2080ti.engine";
-    const std::string& img_name = "./test.jpg";
-    // const std::string& prototxt = cmdparams.getCmdOption("--prototxt");
-    // const std::string& caffemodel = cmdparams.getCmdOption("--caffemodel");
-    // const std::string& save_engine = cmdparams.getCmdOption("--save_engine");
-    // const std::string& img_name = cmdparams.getCmdOption("--input");
+    // const std::string& prototxt = "./models/yolov3/yolov3_416_trt.prototxt";
+    // const std::string& caffemodel = "./models/yolov3/yolov3_416.caffemodel";
+    // const std::string& save_engine = "./models/yolov3/yolov3_416_2080ti.engine";
+    // const std::string& img_name = "./test.jpg";
+    const std::string& prototxt = cmdparams.getCmdOption("--prototxt");
+    const std::string& caffemodel = cmdparams.getCmdOption("--caffemodel");
+    const std::string& save_engine = cmdparams.getCmdOption("--save_engine");
+    const std::string& img_name = cmdparams.getCmdOption("--input");
     
     cv::Mat img = cv::imread(img_name);
 
