@@ -2,8 +2,8 @@
  * @Description: In User Settings Edit
  * @Author: zerollzeng
  * @Date: 2019-08-23 14:50:04
- * @LastEditTime: 2019-08-23 14:50:04
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2019-09-27 17:06:06
+ * @LastEditors: zerollzeng
  */
 #include "YoloV3.h"
 #include "utils.h"
@@ -30,6 +30,7 @@ YoloV3::YoloV3(const std::string& prototxt,
     params.yolo3NetSize = netSize;
     mNet = new Trt(params);
     mNet->CreateEngine(prototxt, caffeModel, engineFile, outputBlobName, calibratorData, maxBatchSize, mode);
+    mNet->PrintTime();
     mYoloClassNum = yoloClassNum;
     mpDetCpu.resize(63883);
 }
@@ -46,7 +47,7 @@ YoloV3::~YoloV3() {
 void DoNms(std::vector<Detection>& detections,int classes ,float nmsThresh)
 {
     using namespace std;
-    auto t_start = chrono::high_resolution_clock::now();
+    // auto t_start = chrono::high_resolution_clock::now();
 
     std::vector<std::vector<Detection>> resClass;
     resClass.resize(classes);
@@ -99,9 +100,9 @@ void DoNms(std::vector<Detection>& detections,int classes ,float nmsThresh)
     //swap(detections,result);
     detections = move(result);
 
-    auto t_end = chrono::high_resolution_clock::now();
-    float total = chrono::duration<float, milli>(t_end - t_start).count();
-    cout << "Time taken for nms is " << total << " ms." << endl;
+    // auto t_end = chrono::high_resolution_clock::now();
+    // float total = chrono::duration<float, milli>(t_end - t_start).count();
+    // cout << "Time taken for nms is " << total << " ms." << endl;
 }
 
 void YoloV3::DoInference(YoloInDataSt* input, std::vector<Bbox>& output) {
@@ -139,13 +140,13 @@ void YoloV3::DoInference(YoloInDataSt* input, std::vector<Bbox>& output) {
     // }
     // std::cout << std::endl;
     int detCount = (int)mpDetCpu[0];
-    std::cout << "detCount: " << detCount << std::endl;
-    for(int i=1;i<71;i++) {
-        if((i-1)%6 == 0) {
-            std::cout << std::endl;
-        }
-        std::cout << mpDetCpu[i] << " ";
-    }
+    // std::cout << "detCount: " << detCount << std::endl;
+    // for(int i=1;i<71;i++) {
+    //     if((i-1)%6 == 0) {
+    //         std::cout << std::endl;
+    //     }
+    //     std::cout << mpDetCpu[i] << " ";
+    // }
 
     std::vector<Detection> result;
     result.resize(detCount);
@@ -167,7 +168,7 @@ void YoloV3::DoInference(YoloInDataSt* input, std::vector<Bbox>& output) {
         bbox[3] /= scaleSize[1];
     }
     DoNms(result,mYoloClassNum,0.5);
-    std::cout << "number of people: " << result.size() << std::endl;
+    // std::cout << "number of people: " << result.size() << std::endl;
     // for(const auto& item : result) {
     //     Bbox bbox;
     //     auto& b= item.bbox;
@@ -187,7 +188,7 @@ void YoloV3::DoInference(YoloInDataSt* input, std::vector<Bbox>& output) {
         bbox.top = std::max(int((b[1]-b[3]/2.)*height),0);
         bbox.bottom = std::min(int((b[1]+b[3]/2.)*height),height);
         bbox.score = item.prob;
-        spdlog::info("object in {},{},{},{}",bbox.left,bbox.top,bbox.right,bbox.bottom);
+        // spdlog::info("object in {},{},{},{}",bbox.left,bbox.top,bbox.right,bbox.bottom);
         output.push_back(bbox);
     }
 }

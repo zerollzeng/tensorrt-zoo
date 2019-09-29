@@ -2,7 +2,7 @@
  * @Author: zerollzeng
  * @Date: 2019-09-02 16:45:43
  * @LastEditors: zerollzeng
- * @LastEditTime: 2019-09-06 20:17:30
+ * @LastEditTime: 2019-09-20 14:52:32
  -->
 # tensorrt-zoo
 common computer vision models and some useful tools base on [tiny-tensorrt](https://github.com/zerollzeng/tiny-tensorrt).
@@ -22,5 +22,13 @@ OPENCV version >= 3.0, only use for read/write images and some basic image proce
 
 # yolov3 sample
 see README.md in yolov3
+
+Caffe features not currently supported by TensorRT include:
+Deconvolution groups
+Dilated convolutions
+PReLU
+Leaky ReLU
+Scale, other than per-channel scaling
+ElementWise (Eltwise) with more than two inputs
 
 
