@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: zerollzeng
  * @Date: 2019-08-23 14:50:04
- * @LastEditTime: 2019-09-27 17:06:06
+ * @LastEditTime: 2019-10-10 17:49:43
  * @LastEditors: zerollzeng
  */
 #include "YoloV3.h"
@@ -106,39 +106,11 @@ void DoNms(std::vector<Detection>& detections,int classes ,float nmsThresh)
 }
 
 void YoloV3::DoInference(YoloInDataSt* input, std::vector<Bbox>& output) {
-    
-    // // debug
-    // for(int i=0;i<10;i++) {
-    //     std::cout << in->data[i] << " ";
-    // }
-    // std::cout << std::endl;
-    // for(int i=259584;i<259594;i++) {
-    //     std::cout << in->data[i] << " ";
-    // }
-    // std::cout << std::endl;
 
     mNet->CopyFromHostToDevice(input->data, 0);
     mNet->Forward();
     mNet->CopyFromDeviceToHost(mpDetCpu, 1);
-    
 
-    // // debug
-    // float* testf = new float[10];
-    // CUDA_CHECK(cudaMemcpy(testf,mBinding[1],10*sizeof(float),cudaMemcpyDeviceToHost));
-    // std::cout << "-----------test-----------" << std::endl;
-    // for(int i=0;i<10;i++) {
-    //     std::cout << testf[i] << " ";
-    // }
-    // std::cout << std::endl << "-----------" << std::endl;
-    // debug
-    // nvinfer1::Dims dims = mEngine->getBindingDimensions(1);
-    // size_t outputSize = volume(dims) * mBatchSize;
-    // float* output = new float[outputSize];
-    // std::cout << "-----------output----------" << std::endl;
-    // for(int i=0;i<10;i++) {
-    //     std::cout << output[i] << " ";
-    // }
-    // std::cout << std::endl;
     int detCount = (int)mpDetCpu[0];
     // std::cout << "detCount: " << detCount << std::endl;
     // for(int i=1;i<71;i++) {
@@ -168,18 +140,6 @@ void YoloV3::DoInference(YoloInDataSt* input, std::vector<Bbox>& output) {
         bbox[3] /= scaleSize[1];
     }
     DoNms(result,mYoloClassNum,0.5);
-    // std::cout << "number of people: " << result.size() << std::endl;
-    // for(const auto& item : result) {
-    //     Bbox bbox;
-    //     auto& b= item.bbox;
-    //     bbox.left = std::max(int((b[0]-b[2]/2.)*width),0);
-    //     bbox.right = std::max(int((b[0]+b[2]/2.)*width),width);
-    //     bbox.top = std::min(int((b[1]-b[3]/2.)*height),0);
-    //     bbox.bottom = std::min(int((b[1]+b[3]/2.)*height),height);
-    //     bbox.score = item.prob;
-    //     std::cout << "left: " << bbox.left << ", top: " << bbox.top << ", right: " << bbox.right << ", bottom: " << bbox.bottom << ", score: " << bbox.score << std::endl;
-    //     out->result.push_back(bbox);
-    // }
     for(const auto& item : result) {
         Bbox bbox;
         auto& b= item.bbox;
@@ -192,13 +152,3 @@ void YoloV3::DoInference(YoloInDataSt* input, std::vector<Bbox>& output) {
         output.push_back(bbox);
     }
 }
-
-// void YoloV3::MallocExtraMemory() {
-//     spdlog::info("malloc det memory...")
-//     nvinfer1::Dims detDims = mEngine->getBindingDimensions(1);
-//     mDetDims = nvinfer1::Dims3(detDims.d[0],detDims.d[1],detDims.d[2]);
-//     std::cout << mEngine->getBindingName(1) << " size: " << mBatchSize << " "  << mDetDims.d[0] << " " << mDetDims.d[1] << " " << mDetDims.d[2] << std::endl;
-//     mDetSize = mBatchSize * mDetDims.d[0] * mDetDims.d[1] * mDetDims.d[2] * getElementSize(mInputDataType);
-//     mpDetGpu = safeCudaMalloc(mDetSize);
-//     mpDetCpu = new float[mDetSize / getElementSize(mInputDataType)];
-// }
