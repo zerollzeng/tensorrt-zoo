@@ -2,7 +2,7 @@
  * @Author: zerollzeng
  * @Date: 2019-09-06 15:13:19
  * @LastEditors: zerollzeng
- * @LastEditTime: 2019-10-10 17:48:57
+ * @LastEditTime: 2019-10-16 17:37:42
  */
 #include "YoloV3.h"
 #include "spdlog/spdlog.h"
@@ -39,7 +39,7 @@ class InputParser{
 };
 
 int main(int argc, char** argv) {
-    std::cout << "usage: ./testyolov3 --prototxt path/to/prototxt --caffemodel path/to/caffemodel/ --save_engine path/to/save_engin --input path/to/input/img" << std::endl;
+    std::cout << "usage: path/to/testyolov3 --prototxt path/to/prototxt --caffemodel path/to/caffemodel/ --save_engine path/to/save_engin --input path/to/input/img" << std::endl;
     InputParser cmdparams(argc, argv);
     // const std::string& prototxt = "./models/yolov3/yolov3_416_trt.prototxt";
     // const std::string& caffemodel = "./models/yolov3/yolov3_416.caffemodel";
@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     int w = 416;   //net w
 
     float scale = std::min(float(w)/img.cols,float(h)/img.rows);
-    auto scaleSize = cv::Size(img.cols * scale,img.rows * scale);
+    auto scaleSize = cv::Size(int(img.cols * scale),int(img.rows * scale));
 
     cv::Mat rgb ;
     cv::cvtColor(img, rgb, CV_BGR2RGB);
@@ -108,24 +108,13 @@ int main(int argc, char** argv) {
         data += channelLength;
     }
 
-    // cv::cvtColor(img,img,cv::COLOR_BGR2RGB);
-    // cv::resize(img,img,cv::Size(416,416));
-    // unsigned char* data = img.data;
-    // YoloInDataSt* input = new YoloInDataSt();
-    // for(int n=0; n<1;n++) {
-    //     for(int c=0;c<3;c++) {
-    //         for(int i=0;i<416*416;i++) {
-    //             input->data[i+c*416*416+n*3*416*416] = (float)data[i*3+c];
-    //         }
-    //     }
-    // }
     std::vector<Bbox> output;
     clock_t start = clock();
     yolo3.DoInference(input, output);
     clock_t end = clock();
     std::cout << "inference Time : " <<((double)(end - start) / CLOCKS_PER_SEC)*1000 << " ms" << std::endl;
     spdlog::info("------------------------");
-    for(int i=0;i<output.size();i++) {
+    for(size_t i=0;i<output.size();i++) {
         Bbox bbox = output[i];
         spdlog::info("object in {},{},{},{}",bbox.left,bbox.top,bbox.right,bbox.bottom);
         cv::rectangle(img,cv::Point(bbox.left,bbox.top),cv::Point(bbox.right,bbox.bottom),cv::Scalar(0,255,0),1);
