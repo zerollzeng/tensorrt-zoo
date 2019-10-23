@@ -24,8 +24,12 @@ add_subdirectory(tiny-tensorrt)
 
 add_subdirectory(yolov3)
 
+<<<<<<< HEAD
 add_subdirectory(openpose)
 
 add_subdirectory(onnx)
 
 add_subdirectory(uff)
+=======
+add_subdirectory(openpose)
+>>>>>>> 620d6a48afbca724e484762a5e9c557bedae0bcf
