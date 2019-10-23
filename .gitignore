@@ -3,6 +3,5 @@ models/
 .vscode/
 bin/
 lib/
-onnx/
 *.jpg
 !/test.jpg
