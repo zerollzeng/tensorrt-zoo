@@ -12,10 +12,11 @@ int main() {
     std::string uffModel = "./models/faster_rcnn.pb";
     std::string engineFile = "";
     std::vector<std::string> input{"input_1"};
+    std::vector<std::vector<int>> inputDims;
     std::vector<std::string> output{"dense_class/Softmax","dense_regress/BiasAdd","proposal"};
     int maxBatchSize = 1;
     Trt* uff_net = new Trt();
-    uff_net->CreateEngine(uffModel, engineFile, input, output, maxBatchSize);
+    uff_net->CreateEngine(uffModel, engineFile, input, inputDims, output, maxBatchSize);
     uff_net->Forward();
     return 0;
 }

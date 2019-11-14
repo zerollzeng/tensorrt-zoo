@@ -30,7 +30,6 @@ YoloV3::YoloV3(const std::string& prototxt,
     params.yolo3NetSize = netSize;
     mNet = new Trt(params);
     mNet->CreateEngine(prototxt, caffeModel, engineFile, outputBlobName, calibratorData, maxBatchSize, mode);
-    mNet->PrintTime();
     mYoloClassNum = yoloClassNum;
     mpDetCpu.resize(63883);
 }
