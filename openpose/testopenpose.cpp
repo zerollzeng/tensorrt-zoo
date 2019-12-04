@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-08-21 09:45:10
- * @LastEditTime: 2019-10-16 17:38:09
+ * @LastEditTime: 2019-12-04 19:27:27
  * @LastEditors: zerollzeng
  */
 #include "OpenPose.hpp"
@@ -48,6 +48,7 @@ int main(int argc, char** argv) {
     const std::string& caffemodel = cmdparams.getCmdOption("--caffemodel");
     const std::string& save_engine = cmdparams.getCmdOption("--save_engine");
     const std::string& img_name = cmdparams.getCmdOption("--input");
+    int run_mode = std::stoi(cmdparams.getCmdOption("--run_mode"));
 
     cv::Mat img = cv::imread(img_name);
     if(img.empty()) {
@@ -81,6 +82,7 @@ int main(int argc, char** argv) {
     
 
     std::vector<std::string> outputBlobname{"net_output"};
+    // std::vector<std::string> outputBlobname{"net_output"};
     std::vector<std::vector<float>> calibratorData;
     calibratorData.resize(3);
     for(size_t i = 0;i<calibratorData.size();i++) {
@@ -97,7 +99,7 @@ int main(int argc, char** argv) {
                         outputBlobname,
                         calibratorData,
                         maxBatchSize,
-                        0);
+                        run_mode);
 
     int i=0;
     while(i<1) {

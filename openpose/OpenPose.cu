@@ -2,7 +2,7 @@
  * @Author: zerollzeng
  * @Date: 2019-10-15 14:31:04
  * @LastEditors: zerollzeng
- * @LastEditTime: 2019-10-16 15:45:47
+ * @LastEditTime: 2019-12-04 19:43:26
  */
 #include "Trt.h"
 #include "OpenPose.hpp"
@@ -100,9 +100,20 @@ void OpenPose::DoInference(std::vector<float>& inputData, std::vector<float>& re
     Normalize<<<numBlocks, 512 , 0>>>((float*)mpInputGpu);
     mNet->Forward();
     std::vector<float> net_output;
-    net_output.resize(78*68*80);
+    net_output.resize(78*60*80); 
     mNet->CopyFromDeviceToHost(net_output,1);
     memcpy((void*)mpHeatMapCpu,(void*)(net_output.data()),mHeatMapSize);
+
+    // for (int i =0;i< 10;i++) {
+    //     std::cout << net_output[i] << " ";
+    // }
+    // std::cout << std::endl;
+    // for(int i=0;i<60*80;i++) {
+    //     std::cout << int(net_output[i]*255/25);
+    //     if((i+1)%80 == 0) {
+    //         std::cout << std::endl;
+    //     }
+    // }
 
     if(mResizeScale > 1) {
         int widthSouce = mHeatMapDims.d[2];
