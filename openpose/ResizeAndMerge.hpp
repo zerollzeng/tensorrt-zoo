@@ -10,7 +10,7 @@
 #include <vector>
 #include <array>
 
-#include <cuda_runtime.h>
+#include "cuda_runtime.h"
 
 namespace op
 {

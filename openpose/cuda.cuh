@@ -4,7 +4,7 @@
 // Note: This class should only be included if CUDA is enabled
 
 #include <cuda.h>
-#include <cuda_runtime.h>
+#include "cuda_runtime.h"
 
 namespace op
 {
