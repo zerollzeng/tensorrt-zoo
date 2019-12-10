@@ -2,7 +2,7 @@
  * @Author: zerollzeng
  * @Date: 2019-09-02 16:45:43
  * @LastEditors: zerollzeng
- * @LastEditTime: 2019-10-17 15:29:42
+ * @LastEditTime: 2019-12-10 17:41:21
  -->
 # tensorrt-zoo
 common computer vision models and some useful tools base on [tiny-tensorrt](https://github.com/zerollzeng/tiny-tensorrt).
@@ -18,9 +18,7 @@ since most of models have complicated pre-processing and post-processing phase, 
 for run sample you need to install opencv and TensorRT
 
 ```bash
-mkdir build
-cd build
-cmake .. && make
+mkdir build && cd build && cmake -D PYTHON_API ON .. && make
 ```
 for yolo3 sample see docs/yolov3.md
 for openpose sample see docs/openpose.md
