@@ -38,7 +38,7 @@ class InputParser{
 };
 
 int main(int argc, char** argv) {
-    std::cout << "usage: path/to/testopenpose --prototxt path/to/prototxt --caffemodel path/to/caffemodel/ --save_engine path/to/save_engin --input path/to/input/img" << std::endl;
+    std::cout << "usage: path/to/testopenpose --prototxt path/to/prototxt --caffemodel path/to/caffemodel/ --save_engine path/to/save_engin --input path/to/input/img --run_mode 0/1/2" << std::endl;
     InputParser cmdparams(argc, argv);
     // const std::string prototxt = "./models/openpose/pose_deploy.prototxt";
     // const std::string caffemodel = "./models/openpose/pose_iter_584000.caffemodel";
