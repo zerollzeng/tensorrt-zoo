@@ -33,7 +33,7 @@ layer {
 
 after build successfully you can run openpose sample like
 ```bash
-./bin/testopenpose --prototxt /path/to/prototxt --caffemodel /path/to/caffemodel --save_engine path/to/save_engine --input /path/to/input_image
+./bin/testopenpose --prototxt /path/to/prototxt --caffemodel /path/to/caffemodel --save_engine path/to/save_engine --input /path/to/input_image --run_mode 0
 ```
 
 and you should see output looks like below, and result in result.jpg
