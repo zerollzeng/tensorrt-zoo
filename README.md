@@ -28,7 +28,7 @@ for openpose sample see docs/openpose.md
 # System requirements
 CUDA version >= 10.0 is fully test
 
-TensorRT 6.0+, 5.1.5 is in other branch
+TensorRT 6.0+, 5.x you need to reset old commit(not recommend)
 
 OPENCV version >= 3.0, only use for read/write images and some basic image processing. so version 2.x might work but have not been tested.
 
