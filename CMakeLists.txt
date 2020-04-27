@@ -26,6 +26,3 @@ add_subdirectory(yolov3)
 
 add_subdirectory(openpose)
 
-add_subdirectory(onnx)
-
-add_subdirectory(uff)

@@ -3,5 +3,7 @@ models/
 .vscode/
 bin/
 lib/
+experimental/
 *.jpg
 !/test.jpg
+
