@@ -8,7 +8,7 @@
 
 ## preparetions
 
-At first you need to download offcial body-25 openpose caffemodel from this [link](http://posefs1.perception.cs.cmu.edu/OpenPose/models/), and download prototxt from this [link](https://raw.githubusercontent.com/CMU-Perceptual-Computing-Lab/openpose/master/models/pose/body_25/pose_deploy.prototxt)
+At first you need to download offcial body-25 openpose caffemodel.
 
 then modify prototxt's inputdims to 1x3x480x640 for run test sample since tensorrt need a fix input dimemsion. you can use other w and h value too. but make sure it's multiple of 16.
 ```
