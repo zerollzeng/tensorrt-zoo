@@ -7,7 +7,7 @@
 # tensorrt-zoo
 common computer vision models and some useful tools base on [tiny-tensorrt](https://github.com/zerollzeng/tiny-tensorrt).
 
-since most of models have complicated pre-processing and post-processing phase, so new model fully supports is time-consuming. so if you have any suggestions, please create an issue :yum::yum::yum::yum::yum:
+**抱歉各位我现在没有太多精力维护这个项目，希望各位在提issue的时候能够尽量根据模板把信息补充完整，只是简单说明或者贴个失败的图我也无法定位问题**
 
 # Roadmap
 - [x] openpose :fire::fire::fire: --- 2019.10.17
