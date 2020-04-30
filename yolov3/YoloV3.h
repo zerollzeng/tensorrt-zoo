@@ -3,20 +3,21 @@
 
 #include "Trt.h"
 
+struct Bbox {
+	int left, right, top, bottom;
+	int clsId;
+	float score;
+};
 struct YoloInDataSt{
     std::vector<float> data;
     int originalWidth;
     int originalHeight;
 };
 
-struct Bbox {
-    int left,right,top,bottom;
-    float score;
-};
-
 struct YoloOutDataSt{
     std::vector<Bbox> result;
 };
+
 
 class YoloV3 {
 public:    
@@ -27,20 +28,21 @@ public:
             const std::vector<std::vector<float>>& calibratorData,
             int maxBatchSize,
             int mode,
+			int device,
             int yoloClassNum,
             int netSize);
 
     ~YoloV3();
 
-    void DoInference(YoloInDataSt* input, std::vector<Bbox>& output);
+    void DoInference(YoloInDataSt* input,int batchsize, std::vector<std::vector<Bbox>>& output);
 
 protected:
     Trt* mNet;
     
     int mYoloClassNum;
 
-    const int mNetWidth = 416;
-    const int mNetHeight = 416;
+    int mNetWidth = 416;
+    int mNetHeight = 416;
 
     std::vector<float> mpDetCpu;
 };
