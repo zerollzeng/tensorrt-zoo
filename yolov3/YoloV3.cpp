@@ -2,8 +2,8 @@
  * @Description: In User Settings Edit
  * @Author: zerollzeng
  * @Date: 2019-08-23 14:50:04
- * @LastEditTime: 2019-10-10 17:49:43
- * @LastEditors: zerollzeng
+ * @LastEditTime: 2020-4-30 13:15:43
+ * @LastEditors: ZHEQIUSHUI
  */
 #include "YoloV3.h"
 #include "utils.h"
@@ -29,13 +29,24 @@ YoloV3::YoloV3(const std::string& prototxt,
     TrtPluginParams params;
     params.yoloClassNum = yoloClassNum;
     params.yolo3NetSize = netSize;
-	mNetHeight = netSize;
-	mNetWidth = netSize;
+    mNetHeight = netSize;
+    mNetWidth = netSize;
     mNet = new Trt(params);
-	mNet->SetDevice(device);
+    mNet->SetDevice(device);
     mNet->CreateEngine(prototxt, caffeModel, engineFile, outputBlobName, calibratorData, maxBatchSize, mode);
     mYoloClassNum = yoloClassNum;
-    mpDetCpu.resize(63883*maxBatchSize);
+	switch (netSize)
+	{
+	case 416:
+		factor = 63883;
+	case 608:
+		factor = 136459;
+	default:
+		break;
+	}
+	mpDetCpu.resize(factor* maxBatchSize);
+    //
+	
 }
 
 YoloV3::~YoloV3() {
@@ -113,22 +124,17 @@ void YoloV3::DoInference(YoloInDataSt* input,int batchsize, std::vector<std::vec
     mNet->CopyFromHostToDevice(input->data, 0);
     mNet->Forward();
     mNet->CopyFromDeviceToHost(mpDetCpu, 1);
+
 	output.resize(batchsize);
 	for (size_t i = 0; i < batchsize; i++)
 	{
-		int detCount = (int)mpDetCpu[63883*i];
+		int detCount = (int)mpDetCpu[factor*i];
 
-		// std::cout << "detCount: " << detCount << std::endl;
-		// for(int i=1;i<71;i++) {
-		//     if((i-1)%6 == 0) {
-		//         std::cout << std::endl;
-		//     }
-		//     std::cout << mpDetCpu[i] << " ";
-		// }
+	
 
 		std::vector<Detection> result;
 		result.resize(detCount);
-		memcpy(result.data(), &mpDetCpu[63883 * i+1], detCount * sizeof(Detection));
+		memcpy(result.data(), &mpDetCpu[factor * i+1], detCount * sizeof(Detection));
 
 		//scale bbox to img
 		int width = input->originalWidth;
