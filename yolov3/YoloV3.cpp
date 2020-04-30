@@ -7,7 +7,7 @@
  */
 #include "YoloV3.h"
 #include "utils.h"
-#include "spdlog/spdlog.h"
+//#include "spdlog/spdlog.h"
 
 #include <NvInfer.h>
 #include <NvCaffeParser.h>
@@ -23,15 +23,19 @@ YoloV3::YoloV3(const std::string& prototxt,
                 const std::vector<std::vector<float>>& calibratorData,
                 int maxBatchSize,
                 int mode,
+				int device,
                 int yoloClassNum,
                 int netSize) {
     TrtPluginParams params;
     params.yoloClassNum = yoloClassNum;
     params.yolo3NetSize = netSize;
+	mNetHeight = netSize;
+	mNetWidth = netSize;
     mNet = new Trt(params);
+	mNet->SetDevice(device);
     mNet->CreateEngine(prototxt, caffeModel, engineFile, outputBlobName, calibratorData, maxBatchSize, mode);
     mYoloClassNum = yoloClassNum;
-    mpDetCpu.resize(63883);
+    mpDetCpu.resize(63883*maxBatchSize);
 }
 
 YoloV3::~YoloV3() {
@@ -104,50 +108,57 @@ void DoNms(std::vector<Detection>& detections,int classes ,float nmsThresh)
     // cout << "Time taken for nms is " << total << " ms." << endl;
 }
 
-void YoloV3::DoInference(YoloInDataSt* input, std::vector<Bbox>& output) {
+void YoloV3::DoInference(YoloInDataSt* input,int batchsize, std::vector<std::vector<Bbox>>& output) {
 
     mNet->CopyFromHostToDevice(input->data, 0);
     mNet->Forward();
     mNet->CopyFromDeviceToHost(mpDetCpu, 1);
+	output.resize(batchsize);
+	for (size_t i = 0; i < batchsize; i++)
+	{
+		int detCount = (int)mpDetCpu[63883*i];
 
-    int detCount = (int)mpDetCpu[0];
-    // std::cout << "detCount: " << detCount << std::endl;
-    // for(int i=1;i<71;i++) {
-    //     if((i-1)%6 == 0) {
-    //         std::cout << std::endl;
-    //     }
-    //     std::cout << mpDetCpu[i] << " ";
-    // }
+		// std::cout << "detCount: " << detCount << std::endl;
+		// for(int i=1;i<71;i++) {
+		//     if((i-1)%6 == 0) {
+		//         std::cout << std::endl;
+		//     }
+		//     std::cout << mpDetCpu[i] << " ";
+		// }
 
-    std::vector<Detection> result;
-    result.resize(detCount);
-    memcpy(result.data(), &mpDetCpu[1], detCount*sizeof(Detection));
+		std::vector<Detection> result;
+		result.resize(detCount);
+		memcpy(result.data(), &mpDetCpu[63883 * i+1], detCount * sizeof(Detection));
 
-    //scale bbox to img
-    int width = input->originalWidth;
-    int height = input->originalHeight;
-    float scale = std::min(float(mNetWidth)/width,float(mNetHeight)/height);
-    float scaleSize[] = {width * scale,height * scale};
+		//scale bbox to img
+		int width = input->originalWidth;
+		int height = input->originalHeight;
+		float scale = std::min(float(mNetWidth) / width, float(mNetHeight) / height);
+		float scaleSize[] = { width * scale,height * scale };
 
-    //correct box
-    for (auto& item : result)
-    {
-        auto& bbox = item.bbox;
-        bbox[0] = (bbox[0] * mNetWidth - (mNetWidth - scaleSize[0])/2.f) / scaleSize[0];
-        bbox[1] = (bbox[1] * mNetHeight - (mNetHeight - scaleSize[1])/2.f) / scaleSize[1];
-        bbox[2] /= scaleSize[0];
-        bbox[3] /= scaleSize[1];
-    }
-    DoNms(result,mYoloClassNum,0.5);
-    for(const auto& item : result) {
-        Bbox bbox;
-        auto& b= item.bbox;
-        bbox.left = std::max(int((b[0]-b[2]/2.)*width),0);
-        bbox.right = std::min(int((b[0]+b[2]/2.)*width),width);
-        bbox.top = std::max(int((b[1]-b[3]/2.)*height),0);
-        bbox.bottom = std::min(int((b[1]+b[3]/2.)*height),height);
-        bbox.score = item.prob;
-        // spdlog::info("object in {},{},{},{}",bbox.left,bbox.top,bbox.right,bbox.bottom);
-        output.push_back(bbox);
-    }
+		//correct box
+		for (auto& item : result)
+		{
+			auto& bbox = item.bbox;
+			bbox[0] = (bbox[0] * mNetWidth - (mNetWidth - scaleSize[0]) / 2.f) / scaleSize[0];
+			bbox[1] = (bbox[1] * mNetHeight - (mNetHeight - scaleSize[1]) / 2.f) / scaleSize[1];
+			bbox[2] /= scaleSize[0];
+			bbox[3] /= scaleSize[1];
+		}
+		DoNms(result,mYoloClassNum,0.5);
+		output[i].resize(result.size());
+		for (size_t j = 0; j < result.size(); j++)
+		{
+			auto& item = result[j];
+			Bbox bbox;
+			auto& b = item.bbox;
+			bbox.left = std::max(int((b[0] - b[2] / 2.)*width), 0);
+			bbox.right = std::min(int((b[0] + b[2] / 2.)*width), width);
+			bbox.top = std::max(int((b[1] - b[3] / 2.)*height), 0);
+			bbox.bottom = std::min(int((b[1] + b[3] / 2.)*height), height);
+			bbox.score = item.prob;
+			bbox.clsId = item.classId;
+			output[i][j] = bbox;
+		}
+	}
 }
