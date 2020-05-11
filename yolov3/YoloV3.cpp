@@ -2,8 +2,8 @@
  * @Description: In User Settings Edit
  * @Author: zerollzeng
  * @Date: 2019-08-23 14:50:04
- * @LastEditTime: 2020-4-30 13:15:43
- * @LastEditors: ZHEQIUSHUI
+ * @LastEditTime: 2020-11-5 10:30:43
+ * @LastEditors: https://github.com/ZHEQIUSHUI
  */
 #include "YoloV3.h"
 #include "utils.h"
@@ -29,18 +29,20 @@ YoloV3::YoloV3(const std::string& prototxt,
     TrtPluginParams params;
     params.yoloClassNum = yoloClassNum;
     params.yolo3NetSize = netSize;
-    mNetHeight = netSize;
-    mNetWidth = netSize;
+	mNetHeight = netSize;
+	mNetWidth = netSize;
     mNet = new Trt(params);
-    mNet->SetDevice(device);
+	mNet->SetDevice(device);
     mNet->CreateEngine(prototxt, caffeModel, engineFile, outputBlobName, calibratorData, maxBatchSize, mode);
     mYoloClassNum = yoloClassNum;
 	switch (netSize)
 	{
 	case 416:
 		factor = 63883;
+		break;
 	case 608:
 		factor = 136459;
+		break;
 	default:
 		break;
 	}
@@ -130,15 +132,21 @@ void YoloV3::DoInference(YoloInDataSt* input,int batchsize, std::vector<std::vec
 	{
 		int detCount = (int)mpDetCpu[factor*i];
 
-	
+		// std::cout << "detCount: " << detCount << std::endl;
+		// for(int i=1;i<71;i++) {
+		//     if((i-1)%6 == 0) {
+		//         std::cout << std::endl;
+		//     }
+		//     std::cout << mpDetCpu[i] << " ";
+		// }
 
 		std::vector<Detection> result;
 		result.resize(detCount);
 		memcpy(result.data(), &mpDetCpu[factor * i+1], detCount * sizeof(Detection));
 
 		//scale bbox to img
-		int width = input->originalWidth;
-		int height = input->originalHeight;
+		int width = input->originalWidths[i];
+		int height = input->originalHeights[i];
 		float scale = std::min(float(mNetWidth) / width, float(mNetHeight) / height);
 		float scaleSize[] = { width * scale,height * scale };
 
