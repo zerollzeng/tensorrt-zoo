@@ -2,8 +2,8 @@
  * @Description: In User Settings Edit
  * @Author: zerollzeng
  * @Date: 2019-08-23 14:50:04
- * @LastEditTime: 2020-04-30 13:17:43
- * @LastEditors: ZHEQIUSHUI
+ * @LastEditTime: 2020-11-5 10:30:43
+ * @LastEditors: https://github.com/ZHEQIUSHUI
  */
 #ifndef YOLOV3_HPP
 #define YOLOV3_HPP
@@ -17,14 +17,9 @@ struct Bbox {
 };
 struct YoloInDataSt{
     std::vector<float> data;
-    int originalWidth;
-    int originalHeight;
+    std::vector<int> originalWidths;
+    std::vector<int> originalHeights;
 };
-
-struct YoloOutDataSt{
-    std::vector<Bbox> result;
-};
-
 
 class YoloV3 {
 public:
