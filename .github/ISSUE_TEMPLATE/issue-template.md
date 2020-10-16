@@ -16,17 +16,17 @@ Steps to reproduce the behavior:
 1. 
 2. 
 
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
 **System environment (please complete the following information):**
- - OS: 
- - TensorRT version: 
+ - Device:
+ - OS:
+ - Driver version:
+ - CUDA version:
+ - TensorRT version:
  - Others:
 
-**Additional context**
-Add any other context about the problem here.
+**Cmake output**
+
+**Running output**
