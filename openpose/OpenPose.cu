@@ -64,7 +64,7 @@ OpenPose::OpenPose(const std::string& prototxt,
                     int maxBatchSize,
                     int runMode) {
     mNet = new Trt();
-    mNet->CreateEngine(prototxt, caffeModel, saveEngine, outputBlobName, calibratorData, maxBatchSize, runMode);
+    mNet->CreateEngine(prototxt, caffeModel, saveEngine, outputBlobName, maxBatchSize, runMode);
     MallocExtraMemory();
 }
 // TODO: release resource

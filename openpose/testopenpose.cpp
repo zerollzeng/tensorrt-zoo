@@ -40,15 +40,13 @@ class InputParser{
 int main(int argc, char** argv) {
     std::cout << "usage: path/to/testopenpose --prototxt path/to/prototxt --caffemodel path/to/caffemodel/ --save_engine path/to/save_engin --input path/to/input/img --run_mode 0/1/2" << std::endl;
     InputParser cmdparams(argc, argv);
-    // const std::string prototxt = "./models/openpose/pose_deploy.prototxt";
-    // const std::string caffemodel = "./models/openpose/pose_iter_584000.caffemodel";
-    // const std::string saveEngine = "./models/openpose/openpose_2080ti.engine";
-    // const std::string img_name = "./test.jpg";
     const std::string& prototxt = cmdparams.getCmdOption("--prototxt");
     const std::string& caffemodel = cmdparams.getCmdOption("--caffemodel");
     const std::string& save_engine = cmdparams.getCmdOption("--save_engine");
     const std::string& img_name = cmdparams.getCmdOption("--input");
     int run_mode = std::stoi(cmdparams.getCmdOption("--run_mode"));
+    int H = std::stoi(cmdparams.getCmdOption("--h"));
+    int W = std::stoi(cmdparams.getCmdOption("--w"));
 
     cv::Mat img = cv::imread(img_name);
     if(img.empty()) {
@@ -56,37 +54,29 @@ int main(int argc, char** argv) {
         return -1;
     }
     cv::cvtColor(img,img,cv::COLOR_BGR2RGB);
-    cv::resize(img,img,cv::Size(640,480));
+    cv::resize(img,img,cv::Size(W,H));
 
     int N = 1;
     int C = 3;
-    int H = 480;
-    int W = 640;
     std::vector<float> inputData;
     inputData.resize(N * C * H * W);
 
     unsigned char* data = img.data;
     for(int n=0; n<N;n++) {
         for(int c=0;c<3;c++) {
-            for(int i=0;i<640*480;i++) {
-                inputData[i+c*640*480+n*3*480*640] = (float)data[i*3+c];
+            for(int i=0;i<W*H;i++) {
+                inputData[i+c*W*H+n*3*H*W] = (float)data[i*3+c];
             }
         }
     }
     std::vector<float> result;
-
-    // for(int i=0;i<10;i++) {
-    //     std::cout << inData.inputData[i] << " " ;
-    // }
-    // return 0;
     
 
     std::vector<std::string> outputBlobname{"net_output"};
-    // std::vector<std::string> outputBlobname{"net_output"};
     std::vector<std::vector<float>> calibratorData;
     calibratorData.resize(3);
     for(size_t i = 0;i<calibratorData.size();i++) {
-        calibratorData[i].resize(3*480*640);
+        calibratorData[i].resize(3*H*W);
         for(size_t j=0;j<calibratorData[i].size();j++) {
             calibratorData[i][j] = 0.05;
         }

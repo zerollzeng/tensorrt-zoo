@@ -33,7 +33,7 @@ YoloV3::YoloV3(const std::string& prototxt,
 	mNetWidth = netSize;
     mNet = new Trt(params);
 	mNet->SetDevice(device);
-    mNet->CreateEngine(prototxt, caffeModel, engineFile, outputBlobName, calibratorData, maxBatchSize, mode);
+    mNet->CreateEngine(prototxt, caffeModel, engineFile, outputBlobName, maxBatchSize, mode);
     mYoloClassNum = yoloClassNum;
 	switch (netSize)
 	{
