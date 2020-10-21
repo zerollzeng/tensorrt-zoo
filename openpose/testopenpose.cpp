@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
     }
     int maxBatchSize = N;
 
-    OpenPose openpose(prototxt,
+    OpenPose* openpose = new OpenPose(prototxt,
                         caffemodel,
                         save_engine,
                         outputBlobname,
@@ -92,9 +92,9 @@ int main(int argc, char** argv) {
                         run_mode);
 
     int i=0;
-    while(i<1) {
+    while(1) {
         clock_t start = clock();
-        openpose.DoInference(inputData,result);
+        openpose->DoInference(inputData,result);
         clock_t end = clock();
         std::cout << "inference Time : " <<((double)(end - start) / CLOCKS_PER_SEC)*1000 << " ms" << std::endl;
         i++;

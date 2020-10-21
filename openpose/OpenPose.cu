@@ -104,17 +104,6 @@ void OpenPose::DoInference(std::vector<float>& inputData, std::vector<float>& re
     mNet->CopyFromDeviceToHost(net_output,1);
     memcpy((void*)mpHeatMapCpu,(void*)(net_output.data()),mHeatMapSize);
 
-    // for (int i =0;i< 10;i++) {
-    //     std::cout << net_output[i] << " ";
-    // }
-    // std::cout << std::endl;
-    // for(int i=0;i<60*80;i++) {
-    //     std::cout << int(net_output[i]*255/25);
-    //     if((i+1)%80 == 0) {
-    //         std::cout << std::endl;
-    //     }
-    // }
-
     if(mResizeScale > 1) {
         int widthSouce = mHeatMapDims.d[2];
         int heightSource = mHeatMapDims.d[1];
