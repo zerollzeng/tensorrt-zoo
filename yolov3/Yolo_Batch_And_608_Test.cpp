@@ -20,13 +20,44 @@
 #pragma comment(lib,"cudart.lib")
 using namespace cv;
 using namespace std;
-int main()
+
+class InputParser{
+    public:
+        InputParser (int &argc, char **argv){
+            for (int i=1; i < argc; ++i)
+                this->tokens.push_back(std::string(argv[i]));
+        }
+        /// @author iain
+        const std::string& getCmdOption(const std::string &option) const{
+            std::vector<std::string>::const_iterator itr;
+            itr =  std::find(this->tokens.begin(), this->tokens.end(), option);
+            if (itr != this->tokens.end() && ++itr != this->tokens.end()){
+                return *itr;
+            }
+            static const std::string empty_string("");
+            return empty_string;
+        }
+        /// @author iain
+        bool cmdOptionExists(const std::string &option) const{
+            return std::find(this->tokens.begin(), this->tokens.end(), option)
+                   != this->tokens.end();
+        }
+    private:
+        std::vector <std::string> tokens;
+};
+
+int main(int argc, char** argv)
 {
+	std::cout << "usage: path/to/testyolov3 --prototxt path/to/prototxt --caffemodel path/to/caffemodel/ --save_engine path/to/save_engin --input path/to/input/img" << std::endl;
+    InputParser cmdparams(argc, argv);
+    const std::string& prototxt = cmdparams.getCmdOption("--prototxt");
+    const std::string& caffemodel = cmdparams.getCmdOption("--caffemodel");
+    const std::string& save_engine = cmdparams.getCmdOption("--save_engine");
+    const std::string& img_name = cmdparams.getCmdOption("--input");
+
 	int yoloClassNum = 80;
 	int yolo_netSize = 416;//or 608
 	std::vector<std::string> yolo_outputBlobname{ "yolo-det" };
-	std::string yolo_prototxt = "D:\\tensorrt\\yolov3\\models\\608\\yolov3_608_trt.prototxt";
-	std::string yolo_caffemodel = "D:\\tensorrt\\yolov3\\models\\608\\yolov3_608.caffemodel";
 	std::vector<std::vector<float>> yolo_calibratorData;
 	yolo_calibratorData.resize(3);
 	for (size_t i = 0; i < yolo_calibratorData.size(); i++) {
@@ -36,9 +67,9 @@ int main()
 		}
 	}
 	int batchsize = 2;
-	YoloV3 yolo(yolo_prototxt, yolo_caffemodel, "E:\\Code\\tinytrt\\bin\\2070_fp16_416_bs2.engine", yolo_outputBlobname, yolo_calibratorData, batchsize, /*mode*/1,/*device*/ 0, yoloClassNum, yolo_netSize);
-	Mat src = imread("E:\\Code\\tinytrt\\bin\\1.jpg");
-	Mat src1 = imread("E:\\Code\\tinytrt\\bin\\2.jpg");
+	YoloV3 yolo(prototxt, caffemodel, save_engine, yolo_outputBlobname, yolo_calibratorData, batchsize, /*mode*/1,/*device*/ 0, yoloClassNum, yolo_netSize);
+	Mat src = imread(img_name);
+	Mat src1 = imread(img_name);
 	vector<Mat> imgs = { src,src1 };
 	YoloInDataSt yolo_input;
 	yolo_input.data.resize(batchsize * 3 * yolo_netSize*yolo_netSize);
@@ -85,15 +116,16 @@ int main()
 	}
 
 	std::vector<std::vector<Bbox>> yolo_output;
-	chrono::steady_clock::time_point time_start = chrono::steady_clock::now();
-  //test 100 times
-	for (size_t i = 0; i < 100; i++)
+
+	while (1)
 	{
+		chrono::steady_clock::time_point time_start = chrono::steady_clock::now();
 		yolo.DoInference(&yolo_input, batchsize, yolo_output);
+		chrono::steady_clock::time_point time_end = chrono::steady_clock::now();
+		chrono::duration<double> time_used = chrono::duration_cast<chrono::duration<double>>(time_end - time_start);
+		cout << "time use:" << time_used.count() << "s" << endl;
 	}
-	chrono::steady_clock::time_point time_end = chrono::steady_clock::now();
-	chrono::duration<double> time_used = chrono::duration_cast<chrono::duration<double>>(time_end - time_start);
-	cout << "time use:" << time_used.count() << "s" << endl;
+	
 	for (size_t i = 0; i < yolo_output.size(); i++)
 	{
 		auto sub_result = yolo_output[i];
@@ -103,8 +135,5 @@ int main()
 			cv::rectangle(imgs[i], cv::Point(bbox.left, bbox.top), cv::Point(bbox.right, bbox.bottom), cv::Scalar(0, 255, 0), 2);
 		}
 	}
-	imshow("1", imgs[0]);
-	imshow("2", imgs[1]);
-	std::cout << "Hello World!\n";
-	waitKey(0);
+	imwrite("./result.jpg",imgs[0]);
 }
