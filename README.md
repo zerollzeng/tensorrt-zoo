@@ -7,9 +7,7 @@
 # tensorrt-zoo
 common computer vision models and some useful tools base on [tiny-tensorrt](https://github.com/zerollzeng/tiny-tensorrt).
 
-**抱歉各位我现在没有太多精力维护这个项目，希望各位在提issue的时候能够尽量根据模板把信息补充完整，只是简单说明或者贴个失败的图我也无法定位问题**
-
-**This project will not update with latest tiny-tensorrt, and I don't have much time maintain this repo, if you have any issue while modify this project with openpose and yolov3, please try dig into source code by your self, I don't remenber the details too :D**
+**This repo is no longer maintained**
 
 # Roadmap
 - [x] openpose :fire::fire::fire: --- 2019.10.17
